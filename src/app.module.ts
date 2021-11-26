@@ -5,6 +5,7 @@ import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './user/entities/user.entity';
+import { UsersModule } from './users/users.module';
 
 const Config = ConfigModule.forRoot({
   isGlobal: true,
@@ -31,6 +32,7 @@ const DBConfig = TypeOrmModule.forRoot({
     // -- modules
     UserModule,
     AuthModule,
+    UsersModule,
   ],
   controllers: [],
   providers: [AppService],
