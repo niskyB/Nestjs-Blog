@@ -1,11 +1,18 @@
+// module
 import { Module } from '@nestjs/common';
-import { AppService } from './app.service';
-import { UserModule } from './user/user.module';
+import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
+
+// service
+import { AppService } from './app.service';
+
+// config & dbconfig
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './user/entities/user.entity';
-import { UsersModule } from './users/users.module';
+
+// entities
+import { User } from './users/entities/user.entity';
+import { ScheduleModule } from '@nestjs/schedule';
 
 const Config = ConfigModule.forRoot({
   isGlobal: true,
@@ -28,11 +35,11 @@ const DBConfig = TypeOrmModule.forRoot({
     // -- configs
     Config,
     DBConfig,
+    ScheduleModule.forRoot(),
 
     // -- modules
-    UserModule,
-    AuthModule,
     UsersModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [AppService],
