@@ -11,7 +11,7 @@ import {
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { JoiValidationPipe } from 'src/utils/repository/validation/JoiValidationPipe.pipe';
+import { JoiValidationPipe } from 'src/utils/validation/JoiValidationPipe.pipe';
 import { createUserSchema } from './dto/create-user.schema';
 
 @Controller('users')

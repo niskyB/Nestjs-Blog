@@ -8,12 +8,14 @@ export class UsersService {
   constructor(private userRepository: UserRepository) {}
 
   async create(createUserDto: CreateUserDto): Promise<CreateUserDto> {
-    const user = await this.userRepository.createNewUser(createUserDto);
-    if (!user) {
-      throw new BadRequestException();
+    const user = this.userRepository.findOneByField(
+      'username',
+      createUserDto.username,
+    );
+    if (user) {
+      throw new BadRequestException('username has already existed');
     }
-
-    return user;
+    return await this.userRepository.createNewUser(createUserDto);
   }
 
   findAll() {
