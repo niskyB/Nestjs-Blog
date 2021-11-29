@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import { Repository } from 'typeorm';
 
 export class RepositoryService<T> extends Repository<T> {

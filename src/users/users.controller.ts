@@ -18,7 +18,12 @@ import { createUserSchema } from './dto/create-user.schema';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Post()
+  /**
+   * @description POST method to create a new user in database
+   * @param createUserDto
+   * @returns response user data if success or error message if fail
+   */
+  @Post('/signup')
   @UsePipes(new JoiValidationPipe(createUserSchema))
   async create(@Body() createUserDto: CreateUserDto) {
     return await this.usersService.create(createUserDto);

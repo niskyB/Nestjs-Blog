@@ -28,6 +28,8 @@
     "@nestjs/platform-express": "^8.0.0",
     "@nestjs/schedule": "^1.0.2",
     "@nestjs/typeorm": "^8.0.2",
+    "@types/bcrypt": "^5.0.0",
+    "bcrypt": "^5.0.1",
     "joi": "^17.4.2",
     "mysql2": "^2.3.3",
     "reflect-metadata": "^0.1.13",

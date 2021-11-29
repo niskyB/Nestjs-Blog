@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import { EntityRepository } from 'typeorm';
 
 // -- Enities
@@ -13,7 +12,8 @@ export class UserRepository extends RepositoryService<User> {
   /**
    *
    *
-   * @description get with common information
+   * @description create a new user in database
+   * @param createUserDto: CreateUserDto
    */
   public async createNewUser(createUserDto: CreateUserDto) {
     const user = new User();
