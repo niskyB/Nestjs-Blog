@@ -3,16 +3,23 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   UsePipes,
+  Put,
+  ParseUUIDPipe,
+  UseInterceptors,
+  UploadedFile,
+  BadRequestException,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { JoiValidationPipe } from 'src/utils/validation/JoiValidationPipe.pipe';
-import { createUserSchema } from './dto/create-user.schema';
+import { createUserSchema } from './schema/create-user.schema';
+import { updateUserSchema } from './schema/update-user.schema';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { multerOptions } from 'src/utils/multer/multerOptions';
 
 @Controller('users')
 export class UsersController {
@@ -39,9 +46,21 @@ export class UsersController {
     return this.usersService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
+  /**
+   * @description PUT method to change user info
+   * @param id of user
+   * @returns successful message or error message
+   */
+  @Put('/profile/avatar/:id')
+  @UseInterceptors(FileInterceptor('file', multerOptions))
+  update(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    if (!file) {
+      throw new BadRequestException('Avatar should not be empty');
+    }
+    return this.usersService.update(id, file);
   }
 
   @Delete(':id')

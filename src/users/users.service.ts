@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 
 // -- dtos
@@ -17,7 +21,11 @@ const SALT = 10;
 export class UsersService {
   constructor(private userRepository: UserRepository) {}
 
-  // create a new user with business requirements
+  /**
+   * @description create user with business requirement
+   * @param createUserDto
+   * @returns Promise of response user info
+   */
   async create(
     createUserDto: CreateUserDto,
   ): Promise<ResponseBody<ResponseUserInfo>> {
@@ -45,7 +53,7 @@ export class UsersService {
 
     // return response body object
     return {
-      data: { username: result.username, role: result.role },
+      data: { username: result.username, role: result.role, name: result.name },
       details: 'Signup successfully',
     } as ResponseBody<ResponseUserInfo>;
   }
@@ -58,8 +66,33 @@ export class UsersService {
     return `This action returns a #${id} user`;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  /**
+   *
+   * @param id
+   * @param updateUserDto
+   */
+  async update(
+    id: string,
+    file: Express.Multer.File,
+  ): Promise<ResponseBody<string>> {
+    // check existed user
+    const user = await this.userRepository.findOne({ id });
+    if (!user) {
+      throw new NotFoundException("SORRY we couldn't find that page");
+    }
+
+    // check and assign file if existed
+    if (file) {
+      user.avatarUrl = file.filename;
+    }
+
+    await this.userRepository.save(user);
+
+    // return response body object
+    return {
+      data: user.avatarUrl,
+      details: 'Update successfully',
+    } as ResponseBody<string>;
   }
 
   remove(id: number) {
