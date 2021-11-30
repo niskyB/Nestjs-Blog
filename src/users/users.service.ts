@@ -60,8 +60,20 @@ export class UsersService {
     } as ResponseBody<ResponseUserInfo>;
   }
 
-  findAll() {
-    return `This action returns all users`;
+  /**
+   * @description get all user in database
+   * @returns users list
+   */
+  async findAll(): Promise<ResponseBody<any>> {
+    const results = await this.userRepository.find();
+    if (results.length === 0) {
+      throw new NotFoundException('The users list is empty');
+    }
+    // return response body object
+    return {
+      data: { results },
+      details: 'Get users successfully',
+    } as ResponseBody<any>;
   }
 
   /**

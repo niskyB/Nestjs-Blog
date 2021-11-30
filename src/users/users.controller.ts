@@ -37,13 +37,17 @@ export class UsersController {
     return await this.usersService.create(createUserDto);
   }
 
+  /**
+   * @description GET method to find all users
+   * @returns  response list of user data if success or error message if fail
+   */
   @Get()
-  findAll() {
-    return this.usersService.findAll();
+  async findAll() {
+    return await this.usersService.findAll();
   }
 
   /**
-   * @description find user by id
+   * @description GET method to find user by id
    * @param id
    * @returns response user data if success or error message if fail
    */
@@ -70,7 +74,7 @@ export class UsersController {
   }
 
   /**
-   * @description update name of user
+   * @description PUT method to update name of user
    * @param id
    * @param updateUserDto
    * @returns response user data if success or error message if fail
@@ -85,7 +89,7 @@ export class UsersController {
   }
 
   /**
-   * @description update password of user
+   * @description PUT method to update password of user
    * @param id
    * @param updatePasswordDto
    * @returns success message or error message
@@ -100,7 +104,7 @@ export class UsersController {
   }
 
   /**
-   * @description bannish user
+   * @description PUT method to bannish user
    * @param id
    * @returns success message or error message
    */
