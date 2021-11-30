@@ -4,7 +4,6 @@ import {
   Post,
   Body,
   Param,
-  Delete,
   UsePipes,
   Put,
   ParseUUIDPipe,
@@ -95,8 +94,13 @@ export class UsersController {
     return await this.usersService.updatePassword(id, updatePasswordDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
+  /**
+   * @description bannish user
+   * @param id
+   * @returns success message or error message
+   */
+  @Put('banishment/:id')
+  async banish(@Param('id', new ParseUUIDPipe()) id: string) {
+    return await this.usersService.banish(id);
   }
 }

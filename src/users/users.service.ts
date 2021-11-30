@@ -163,7 +163,25 @@ export class UsersService {
     } as ResponseBody<string>;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  /**
+   * @description update isDisabled of user to true
+   * @param id
+   */
+  async banish(id: string): Promise<ResponseBody<string>> {
+    // check existed user
+    const user = await this.userRepository.findOne({ id });
+    if (!user) {
+      throw new NotFoundException("SORRY we couldn't find that page");
+    }
+
+    user.isDisabled = true;
+
+    // save to db
+    await this.userRepository.save(user);
+
+    // return response body object
+    return {
+      details: 'Banish successfully',
+    } as ResponseBody<string>;
   }
 }
