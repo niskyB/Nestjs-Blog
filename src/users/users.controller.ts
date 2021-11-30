@@ -53,14 +53,29 @@ export class UsersController {
    */
   @Put('/profile/avatar/:id')
   @UseInterceptors(FileInterceptor('file', multerOptions))
-  update(
+  async updateAvatar(
     @Param('id', new ParseUUIDPipe()) id: string,
     @UploadedFile() file: Express.Multer.File,
   ) {
     if (!file) {
       throw new BadRequestException('Avatar should not be empty');
     }
-    return this.usersService.update(id, file);
+    return await this.usersService.updateAvatar(id, file);
+  }
+
+  /**
+   * @description update name of user
+   * @param id
+   * @param updateUserDto
+   * @returns response user data if success or error message if fail
+   */
+  @Put('/profile/name/:id')
+  @UsePipes(new JoiValidationPipe(updateUserSchema))
+  async updateName(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
+    return await this.usersService.updateName(id, updateUserDto);
   }
 
   @Delete(':id')

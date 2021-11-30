@@ -67,11 +67,11 @@ export class UsersService {
   }
 
   /**
-   *
+   * @description update avatar of user with the given data
    * @param id
    * @param updateUserDto
    */
-  async update(
+  async updateAvatar(
     id: string,
     file: Express.Multer.File,
   ): Promise<ResponseBody<string>> {
@@ -81,7 +81,7 @@ export class UsersService {
       throw new NotFoundException("SORRY we couldn't find that page");
     }
 
-    // check and assign file if existed
+    // assign file
     if (file) {
       user.avatarUrl = file.filename;
     }
@@ -93,6 +93,33 @@ export class UsersService {
       data: user.avatarUrl,
       details: 'Update successfully',
     } as ResponseBody<string>;
+  }
+
+  /**
+   * @description update name of user with the given data
+   * @param id
+   * @param updateUserDto
+   */
+  async updateName(
+    id: string,
+    updateUserDto: UpdateUserDto,
+  ): Promise<ResponseBody<ResponseUserInfo>> {
+    // check existed user
+    const user = await this.userRepository.findOne({ id });
+    if (!user) {
+      throw new NotFoundException("SORRY we couldn't find that page");
+    }
+
+    // assign name
+    user.name = updateUserDto.name;
+
+    await this.userRepository.save(user);
+
+    // return response body object
+    return {
+      data: { username: user.username, role: user.role, name: user.name },
+      details: 'Signup successfully',
+    } as ResponseBody<ResponseUserInfo>;
   }
 
   remove(id: number) {

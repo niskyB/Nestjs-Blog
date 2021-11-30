@@ -1,6 +1,7 @@
 import * as multer from 'multer';
 import * as path from 'path';
 import { Request } from 'express';
+import { BadRequestException } from '@nestjs/common';
 
 const maxSize = 1 * 1024 * 1024;
 
@@ -22,7 +23,7 @@ const fileFilter = (req: Request, file: Express.Multer.File, cb: any) => {
   ) {
     cb(null, true);
   } else {
-    cb(new Error('Image uploaded should be jpg/jpeg or png'), false);
+    cb(new BadRequestException('Image uploaded should be jpg/jpeg or png'));
   }
 };
 
