@@ -13,6 +13,7 @@ import { ResponseUserInfo } from './dto/response-user-info.dto';
 
 // repository
 import { UserRepository } from './entities/user.repository';
+import { UpdatePasswordDto } from './dto/update-password.dto';
 
 // rounds of hashing
 const SALT = 10;
@@ -41,7 +42,7 @@ export class UsersService {
     // check password
     if (createUserDto.password != createUserDto.confirmPassword) {
       throw new BadRequestException(
-        'password and confirmpassword are not correct',
+        'password and confirm password are not correct',
       );
     }
 
@@ -120,6 +121,46 @@ export class UsersService {
       data: { username: user.username, role: user.role, name: user.name },
       details: 'Signup successfully',
     } as ResponseBody<ResponseUserInfo>;
+  }
+
+  /**
+   * @description update password of user
+   * @param id
+   * @param updatePasswordDto
+   */
+  async updatePassword(
+    id: string,
+    updatePasswordDto: UpdatePasswordDto,
+  ): Promise<ResponseBody<string>> {
+    // check existed user
+    const user = await this.userRepository.findOne({ id });
+    if (!user) {
+      throw new NotFoundException("SORRY we couldn't find that page");
+    }
+
+    // check password
+
+    if (!(await bcrypt.compare(updatePasswordDto.password, user.password))) {
+      throw new BadRequestException('Password is not correct');
+    }
+
+    // check new password
+    if (updatePasswordDto.newPassword !== updatePasswordDto.confirmPassword) {
+      throw new BadRequestException(
+        'new password and confirm password are not correct',
+      );
+    }
+
+    // assign new password
+    user.password = await bcrypt.hash(updatePasswordDto.newPassword, SALT);
+
+    // save to db
+    await this.userRepository.save(user);
+
+    // return response body object
+    return {
+      details: 'Update successfully',
+    } as ResponseBody<string>;
   }
 
   remove(id: number) {

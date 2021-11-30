@@ -20,6 +20,8 @@ import { createUserSchema } from './schema/create-user.schema';
 import { updateUserSchema } from './schema/update-user.schema';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { multerOptions } from 'src/utils/multer/multerOptions';
+import { UpdatePasswordDto } from './dto/update-password.dto';
+import { updatePasswordSchema } from './schema/update-password.schema';
 
 @Controller('users')
 export class UsersController {
@@ -76,6 +78,21 @@ export class UsersController {
     @Body() updateUserDto: UpdateUserDto,
   ) {
     return await this.usersService.updateName(id, updateUserDto);
+  }
+
+  /**
+   * @description update password of user
+   * @param id
+   * @param updatePasswordDto
+   * @returns success message or error message
+   */
+  @Put('password/:id')
+  @UsePipes(new JoiValidationPipe(updatePasswordSchema))
+  async updatePassword(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body() updatePasswordDto: UpdatePasswordDto,
+  ) {
+    return await this.usersService.updatePassword(id, updatePasswordDto);
   }
 
   @Delete(':id')
