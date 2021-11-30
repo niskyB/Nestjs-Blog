@@ -14,6 +14,7 @@ import { ResponseUserInfo } from './dto/response-user-info.dto';
 // repository
 import { UserRepository } from './entities/user.repository';
 import { UpdatePasswordDto } from './dto/update-password.dto';
+import { User } from './entities/user.entity';
 
 // rounds of hashing
 const SALT = 10;
@@ -63,8 +64,22 @@ export class UsersService {
     return `This action returns all users`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  /**
+   * @description find user by given id
+   * @param id
+   * @returns Promise of response user info
+   */
+  async findOne(id: string): Promise<ResponseBody<User>> {
+    // check existed user or disabled user
+    const user = await this.userRepository.findOneByField('id', id);
+    if (!user || user.isDisabled) {
+      throw new NotFoundException("SORRY we couldn't find that page");
+    }
+    // return response body object
+    return {
+      data: user,
+      details: 'Get user successfully',
+    } as ResponseBody<User>;
   }
 
   /**

@@ -42,9 +42,14 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
+  /**
+   * @description find user by id
+   * @param id
+   * @returns response user data if success or error message if fail
+   */
+  @Get('/:id')
+  async findOne(@Param('id', new ParseUUIDPipe()) id: string) {
+    return await this.usersService.findOne(id);
   }
 
   /**
