@@ -1,17 +1,22 @@
 import * as bcrypt from 'bcrypt';
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { ResponseBody } from 'src/app/interface/api.interface';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { LoginUserDto } from 'src/users/dto/login-user.dto';
 import { User } from 'src/users/entities/user.entity';
 import { UserRepository } from 'src/users/entities/user.repository';
-
+import { JwtService } from '@nestjs/jwt';
+import { plainToClass } from 'class-transformer';
+import { UserToken } from './entities/user.token';
 // rounds of hashing
 const SALT = 10;
 
 @Injectable()
 export class AuthService {
-  constructor(private userRepository: UserRepository) {}
+  constructor(
+    private userRepository: UserRepository,
+    private jwtService: JwtService,
+  ) {}
+
   /**
    * @description create user with business requirement
    * @param createUserDto
@@ -43,12 +48,13 @@ export class AuthService {
     // return response body object
     return result;
   }
+
   /**
    * @description check username and password
    * @param loginUserDto
    * @returns Promise of response user info
    */
-  async login(loginUserDto: LoginUserDto): Promise<ResponseBody<User>> {
+  async login(loginUserDto: LoginUserDto): Promise<User> {
     // check existed user
     const user = await this.userRepository.findOneByField(
       'username',
@@ -68,9 +74,13 @@ export class AuthService {
       throw new BadRequestException('username or password is not correct');
     }
 
-    return {
-      data: user,
-      details: 'Signup successfully',
-    } as ResponseBody<User>;
+    return user;
+  }
+
+  async creatToken(user: User) {
+    const payload = plainToClass(UserToken, user, {
+      excludeExtraneousValues: true,
+    }) as UserToken;
+    return this.jwtService.sign(JSON.stringify(payload));
   }
 }

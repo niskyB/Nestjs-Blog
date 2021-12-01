@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UsePipes } from '@nestjs/common';
+import { Body, Controller, Post, Res, UsePipes } from '@nestjs/common';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { LoginUserDto } from 'src/users/dto/login-user.dto';
 import { ResponseUserInfo } from 'src/users/dto/response-user-info.dto';
@@ -7,10 +7,12 @@ import { loginUserSchema } from 'src/users/schema/login-user.schema';
 import { serialize } from 'src/utils/interceptor/serialize.interceptor';
 import { JoiValidationPipe } from 'src/utils/validation/JoiValidationPipe.pipe';
 import { AuthService } from './auth.service';
+import { Response } from 'express';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
+
   /**
    * @description POST method to create a new user in database
    * @param createUserDto
@@ -30,7 +32,15 @@ export class AuthController {
    */
   @Post('/login')
   @UsePipes(new JoiValidationPipe(loginUserSchema))
-  async login(@Body() loginUserDto: LoginUserDto) {
-    return await this.authService.login(loginUserDto);
+  async login(
+    @Body() loginUserDto: LoginUserDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const result = await this.authService.login(loginUserDto);
+    const token = await this.authService.creatToken(result);
+    res.cookie('auth-user-token', token, {
+      maxAge: 86400 * 100,
+    });
+    return result;
   }
 }
