@@ -23,6 +23,8 @@ import { UpdatePasswordDto } from './dto/update-password.dto';
 import { updatePasswordSchema } from './schema/update-password.schema';
 import { LoginUserDto } from './dto/login-user.dto';
 import { loginUserSchema } from './schema/login-user.schema';
+import { serialize } from 'src/utils/interceptor/serialize.interceptor';
+import { ResponseUserInfo } from './dto/response-user-info.dto';
 
 @Controller('users')
 export class UsersController {
@@ -34,6 +36,7 @@ export class UsersController {
    * @returns response user data if success or error message if fail
    */
   @Post('/signup')
+  @serialize(ResponseUserInfo)
   @UsePipes(new JoiValidationPipe(createUserSchema))
   async create(@Body() createUserDto: CreateUserDto) {
     return await this.usersService.create(createUserDto);
@@ -93,6 +96,7 @@ export class UsersController {
    * @returns response user data if success or error message if fail
    */
   @Put('/profile/name/:id')
+  @serialize(ResponseUserInfo)
   @UsePipes(new JoiValidationPipe(updateUserSchema))
   async updateName(
     @Param('id', new ParseUUIDPipe()) id: string,

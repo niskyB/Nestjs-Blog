@@ -1,8 +1,13 @@
-import { PickType } from '@nestjs/mapped-types';
-import { User } from '../entities/user.entity';
+import { Expose } from 'class-transformer';
+import { UserRole } from '../enum/user.userRole.enum';
 
-export class ResponseUserInfo extends PickType(User, [
-  'username',
-  'role',
-  'name',
-]) {}
+export class ResponseUserInfo {
+  @Expose()
+  username: string;
+
+  @Expose()
+  role: UserRole;
+
+  @Expose()
+  name: string;
+}

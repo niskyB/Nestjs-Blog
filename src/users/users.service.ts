@@ -9,7 +9,6 @@ import * as bcrypt from 'bcrypt';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ResponseBody } from 'src/app/interface/api.interface';
-import { ResponseUserInfo } from './dto/response-user-info.dto';
 
 // repository
 import { UserRepository } from './entities/user.repository';
@@ -29,9 +28,7 @@ export class UsersService {
    * @param createUserDto
    * @returns Promise of response user info
    */
-  async create(
-    createUserDto: CreateUserDto,
-  ): Promise<ResponseBody<ResponseUserInfo>> {
+  async create(createUserDto: CreateUserDto): Promise<User> {
     // check existed user
     const user = await this.userRepository.findOneByField(
       'username',
@@ -55,12 +52,8 @@ export class UsersService {
     const result = await this.userRepository.createNewUser(createUserDto);
 
     // return response body object
-    return {
-      data: { username: result.username, role: result.role, name: result.name },
-      details: 'Signup successfully',
-    } as ResponseBody<ResponseUserInfo>;
+    return result;
   }
-
   /**
    * @description check username and password
    * @param loginUserDto
@@ -160,10 +153,7 @@ export class UsersService {
    * @param id
    * @param updateUserDto
    */
-  async updateName(
-    id: string,
-    updateUserDto: UpdateUserDto,
-  ): Promise<ResponseBody<ResponseUserInfo>> {
+  async updateName(id: string, updateUserDto: UpdateUserDto): Promise<User> {
     // check existed user
     const user = await this.userRepository.findOne({ id });
     if (!user) {
@@ -173,13 +163,10 @@ export class UsersService {
     // assign name
     user.name = updateUserDto.name;
 
-    await this.userRepository.save(user);
+    const result = await this.userRepository.save(user);
 
     // return response body object
-    return {
-      data: { username: user.username, role: user.role, name: user.name },
-      details: 'Signup successfully',
-    } as ResponseBody<ResponseUserInfo>;
+    return result;
   }
 
   /**
