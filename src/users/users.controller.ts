@@ -1,7 +1,6 @@
 import {
   Controller,
   Get,
-  Post,
   Body,
   Param,
   UsePipes,
@@ -12,46 +11,17 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { JoiValidationPipe } from 'src/utils/validation/JoiValidationPipe.pipe';
-import { createUserSchema } from './schema/create-user.schema';
 import { updateUserSchema } from './schema/update-user.schema';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { multerOptions } from 'src/utils/multer/multerOptions';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { updatePasswordSchema } from './schema/update-password.schema';
-import { LoginUserDto } from './dto/login-user.dto';
-import { loginUserSchema } from './schema/login-user.schema';
-import { serialize } from 'src/utils/interceptor/serialize.interceptor';
-import { ResponseUserInfo } from './dto/response-user-info.dto';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
-
-  /**
-   * @description POST method to create a new user in database
-   * @param createUserDto
-   * @returns response user data if success or error message if fail
-   */
-  @Post('/signup')
-  @serialize(ResponseUserInfo)
-  @UsePipes(new JoiValidationPipe(createUserSchema))
-  async create(@Body() createUserDto: CreateUserDto) {
-    return await this.usersService.create(createUserDto);
-  }
-
-  /**
-   * @description POST method to login
-   * @param loginUserDto
-   * @returns response user data and send jwt to cookie if success or error message if fail
-   */
-  @Post('/login')
-  @UsePipes(new JoiValidationPipe(loginUserSchema))
-  async login(@Body() loginUserDto: LoginUserDto) {
-    return await this.usersService.login(loginUserDto);
-  }
 
   /**
    * @description GET method to find all users
@@ -96,7 +66,6 @@ export class UsersController {
    * @returns response user data if success or error message if fail
    */
   @Put('/profile/name/:id')
-  @serialize(ResponseUserInfo)
   @UsePipes(new JoiValidationPipe(updateUserSchema))
   async updateName(
     @Param('id', new ParseUUIDPipe()) id: string,
