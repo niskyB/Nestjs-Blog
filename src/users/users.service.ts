@@ -15,6 +15,7 @@ import { ResponseUserInfo } from './dto/response-user-info.dto';
 import { UserRepository } from './entities/user.repository';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { User } from './entities/user.entity';
+import { LoginUserDto } from './dto/login-user.dto';
 
 // rounds of hashing
 const SALT = 10;
@@ -58,6 +59,37 @@ export class UsersService {
       data: { username: result.username, role: result.role, name: result.name },
       details: 'Signup successfully',
     } as ResponseBody<ResponseUserInfo>;
+  }
+
+  /**
+   * @description check username and password
+   * @param loginUserDto
+   * @returns Promise of response user info
+   */
+  async login(loginUserDto: LoginUserDto): Promise<ResponseBody<User>> {
+    // check existed user
+    const user = await this.userRepository.findOneByField(
+      'username',
+      loginUserDto.username,
+    );
+    if (!user) {
+      throw new BadRequestException('username or password is not correct');
+    }
+
+    // check isDisabled
+    if (user.isDisabled) {
+      throw new BadRequestException('username or password is not correct');
+    }
+
+    // check password
+    if (!(await bcrypt.compare(loginUserDto.password, user.password))) {
+      throw new BadRequestException('username or password is not correct');
+    }
+
+    return {
+      data: user,
+      details: 'Signup successfully',
+    } as ResponseBody<User>;
   }
 
   /**
