@@ -10,6 +10,7 @@ import {
   UploadedFile,
   BadRequestException,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -22,6 +23,7 @@ import { updatePasswordSchema } from './schema/update-password.schema';
 import { Roles } from 'src/auth/decorator/roles.decorator';
 import { UserRole } from './enum/user.userRole.enum';
 import { UserGuard } from 'src/auth/guard/auth.guard';
+import { Request } from 'express';
 
 @Controller('users')
 @UseGuards(UserGuard)
@@ -32,7 +34,7 @@ export class UsersController {
    * @description GET method to find all users
    * @returns  response list of user data if success or error message if fail
    */
-  @Get()
+  @Get('/all')
   @Roles(UserRole.ADMIN)
   async findAll() {
     return await this.usersService.findAll();
@@ -40,64 +42,62 @@ export class UsersController {
 
   /**
    * @description GET method to find user by id
-   * @param id
    * @returns response user data if success or error message if fail
    */
-  @Get('/:id')
-  async findOne(@Param('id', new ParseUUIDPipe()) id: string) {
-    return await this.usersService.findOne(id);
+  @Get()
+  async findOne(@Req() req: Request) {
+    return await this.usersService.findOne(req.currentUser.id);
   }
 
   /**
    * @description PUT method to change user info
-   * @param id of user
    * @returns successful message or error message
    */
-  @Put('/profile/avatar/:id')
+  @Put('/profile/avatar')
   @UseInterceptors(FileInterceptor('file', multerOptions))
   async updateAvatar(
-    @Param('id', new ParseUUIDPipe()) id: string,
     @UploadedFile() file: Express.Multer.File,
+    @Req() req: Request,
   ) {
     if (!file) {
       throw new BadRequestException('Avatar should not be empty');
     }
-    return await this.usersService.updateAvatar(id, file);
+    return await this.usersService.updateAvatar(req.currentUser.id, file);
   }
 
   /**
    * @description PUT method to update name of user
-   * @param id
    * @param updateUserDto
    * @returns response user data if success or error message if fail
    */
-  @Put('/profile/name/:id')
+  @Put('/profile/name')
   @UsePipes(new JoiValidationPipe(updateUserSchema))
-  async updateName(
-    @Param('id', new ParseUUIDPipe()) id: string,
-    @Body() updateUserDto: UpdateUserDto,
-  ) {
-    return await this.usersService.updateName(id, updateUserDto);
+  async updateName(@Body() updateUserDto: UpdateUserDto, @Req() req: Request) {
+    return await this.usersService.updateName(
+      req.currentUser.id,
+      updateUserDto,
+    );
   }
 
   /**
    * @description PUT method to update password of user
-   * @param id
    * @param updatePasswordDto
    * @returns success message or error message
    */
-  @Put('password/:id')
+  @Put('password')
   @UsePipes(new JoiValidationPipe(updatePasswordSchema))
   async updatePassword(
-    @Param('id', new ParseUUIDPipe()) id: string,
     @Body() updatePasswordDto: UpdatePasswordDto,
+    @Req() req: Request,
   ) {
-    return await this.usersService.updatePassword(id, updatePasswordDto);
+    return await this.usersService.updatePassword(
+      req.currentUser.id,
+      updatePasswordDto,
+    );
   }
 
   /**
    * @description PUT method to bannish user
-   * @param id
    * @returns success message or error message
    */
   @Put('banishment/:id')
