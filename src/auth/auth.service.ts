@@ -77,10 +77,30 @@ export class AuthService {
     return user;
   }
 
+  /**
+   * @description generate jwt token with user's info
+   * @param user
+   * @returns jwt token
+   */
   async creatToken(user: User) {
-    const payload = plainToClass(UserToken, user, {
-      excludeExtraneousValues: true,
-    }) as UserToken;
-    return this.jwtService.sign(JSON.stringify(payload));
+    const payload = {
+      ...plainToClass(UserToken, user, {
+        excludeExtraneousValues: true,
+      }),
+    };
+    return this.jwtService.sign(payload);
+  }
+
+  /**
+   * @description get UserToken from token
+   * @param authToken
+   * @returns UserToken instance
+   */
+  getUserByToken(authToken: string): UserToken {
+    try {
+      return this.jwtService.verify<any>(authToken) as UserToken;
+    } catch (err) {
+      return null;
+    }
   }
 }

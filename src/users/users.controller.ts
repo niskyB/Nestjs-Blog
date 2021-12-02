@@ -9,6 +9,7 @@ import {
   UseInterceptors,
   UploadedFile,
   BadRequestException,
+  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -18,8 +19,12 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { multerOptions } from 'src/utils/multer/multerOptions';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { updatePasswordSchema } from './schema/update-password.schema';
+import { Roles } from 'src/auth/decorator/roles.decorator';
+import { UserRole } from './enum/user.userRole.enum';
+import { UserGuard } from 'src/auth/guard/auth.guard';
 
 @Controller('users')
+@UseGuards(UserGuard)
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
@@ -28,6 +33,7 @@ export class UsersController {
    * @returns  response list of user data if success or error message if fail
    */
   @Get()
+  @Roles(UserRole.ADMIN)
   async findAll() {
     return await this.usersService.findAll();
   }
@@ -95,6 +101,7 @@ export class UsersController {
    * @returns success message or error message
    */
   @Put('banishment/:id')
+  @Roles(UserRole.ADMIN)
   async banish(@Param('id', new ParseUUIDPipe()) id: string) {
     return await this.usersService.banish(id);
   }
