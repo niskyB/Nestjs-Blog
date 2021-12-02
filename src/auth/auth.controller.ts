@@ -43,4 +43,15 @@ export class AuthController {
     });
     return result;
   }
+
+  /**
+   * @description POST method to delete token in cookie
+   * @param res Request
+   * @returns success message
+   */
+  @Post('/logout')
+  async logout(@Res({ passthrough: true }) res: Response) {
+    res.cookie('auth-user-token', '', { maxAge: -999 });
+    return 'Logout successful';
+  }
 }
