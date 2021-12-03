@@ -13,6 +13,7 @@ import { ResponseBody } from 'src/app/interface/api.interface';
 import { UserRepository } from './entities/user.repository';
 import { UpdatePasswordDto } from './dto/update-password.dto';
 import { User } from './entities/user.entity';
+import { CreateUserDto } from './dto/create-user.dto';
 
 // rounds of hashing
 const SALT = 10;
@@ -165,5 +166,24 @@ export class UsersService {
     return {
       details: 'Banish successfully',
     } as ResponseBody<string>;
+  }
+
+  /**
+   * @description find user by field
+   * @param field keyof User
+   * @param value any
+   * @returns User instance
+   */
+  async findOneByField(field: keyof User, value: any) {
+    return await this.userRepository.findOneByField('username', value);
+  }
+
+  /**
+   * @description create a new user in db
+   * @param createUserDto
+   * @returns User instance
+   */
+  async createNewUser(createUserDto: CreateUserDto) {
+    return await this.userRepository.createNewUser(createUserDto);
   }
 }

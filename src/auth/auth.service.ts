@@ -3,17 +3,17 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { LoginUserDto } from 'src/users/dto/login-user.dto';
 import { User } from 'src/users/entities/user.entity';
-import { UserRepository } from 'src/users/entities/user.repository';
 import { JwtService } from '@nestjs/jwt';
 import { plainToClass } from 'class-transformer';
 import { UserToken } from './entities/user.token';
+import { UsersService } from 'src/users/users.service';
 // rounds of hashing
 const SALT = 10;
 
 @Injectable()
 export class AuthService {
   constructor(
-    private userRepository: UserRepository,
+    private userService: UsersService,
     private jwtService: JwtService,
   ) {}
 
@@ -24,7 +24,7 @@ export class AuthService {
    */
   async create(createUserDto: CreateUserDto): Promise<User> {
     // check existed user
-    const user = await this.userRepository.findOneByField(
+    const user = await this.userService.findOneByField(
       'username',
       createUserDto.username,
     );
@@ -43,7 +43,7 @@ export class AuthService {
     createUserDto.password = await bcrypt.hash(createUserDto.password, SALT);
 
     // call createNewUser method from repository
-    const result = await this.userRepository.createNewUser(createUserDto);
+    const result = await this.userService.createNewUser(createUserDto);
 
     // return response body object
     return result;
@@ -56,7 +56,7 @@ export class AuthService {
    */
   async login(loginUserDto: LoginUserDto): Promise<User> {
     // check existed user
-    const user = await this.userRepository.findOneByField(
+    const user = await this.userService.findOneByField(
       'username',
       loginUserDto.username,
     );
