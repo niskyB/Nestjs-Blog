@@ -10,7 +10,6 @@ describe('AuthService', () => {
   let fakeUserService: Partial<UsersService>;
   let testCreateUserDto: CreateUserDto;
   let users: User[];
-  let fakeUser: User;
 
   beforeEach(async () => {
     users = [];
@@ -41,17 +40,6 @@ describe('AuthService', () => {
       confirmPassword: '123456',
       name: 'hoang loc',
     } as CreateUserDto;
-
-    fakeUser = {
-      id: 'dsfaf' + Math.floor(Math.random() * 9999),
-      username: testCreateUserDto.username,
-      name: testCreateUserDto.name,
-      password: testCreateUserDto.password,
-      avatarUrl: 'acb',
-      role: 'USER',
-      isDisabled: false,
-      createDate: null,
-    } as User;
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
