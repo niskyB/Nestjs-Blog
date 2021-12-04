@@ -28,9 +28,6 @@ export class UsersService {
    */
   async findAll(): Promise<ResponseBody<any>> {
     const results = await this.userRepository.find();
-    if (results.length === 0) {
-      throw new NotFoundException('The users list is empty');
-    }
     // return response body object
     return {
       data: { results },
@@ -66,7 +63,7 @@ export class UsersService {
     file: Express.Multer.File,
   ): Promise<ResponseBody<string>> {
     // check existed user
-    const user = await this.userRepository.findOne({ id });
+    const user = await this.userRepository.findOneByField('id', id);
     if (!user) {
       throw new NotFoundException("SORRY we couldn't find that page");
     }
@@ -92,7 +89,7 @@ export class UsersService {
    */
   async updateName(id: string, updateUserDto: UpdateUserDto): Promise<User> {
     // check existed user
-    const user = await this.userRepository.findOne({ id });
+    const user = await this.userRepository.findOneByField('id', id);
     if (!user) {
       throw new NotFoundException("SORRY we couldn't find that page");
     }
@@ -116,7 +113,7 @@ export class UsersService {
     updatePasswordDto: UpdatePasswordDto,
   ): Promise<ResponseBody<string>> {
     // check existed user
-    const user = await this.userRepository.findOne({ id });
+    const user = await this.userRepository.findOneByField('id', id);
     if (!user) {
       throw new NotFoundException("SORRY we couldn't find that page");
     }
@@ -152,7 +149,7 @@ export class UsersService {
    */
   async banish(id: string): Promise<ResponseBody<string>> {
     // check existed user
-    const user = await this.userRepository.findOne({ id });
+    const user = await this.userRepository.findOneByField('id', id);
     if (!user) {
       throw new NotFoundException("SORRY we couldn't find that page");
     }
