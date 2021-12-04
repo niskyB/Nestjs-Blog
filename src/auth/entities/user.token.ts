@@ -1,5 +1,5 @@
 import { Expose } from 'class-transformer';
-import { UserRole } from 'src/users/enum/user.userRole.enum';
+import { UserRole } from '../../users/enum/user.userRole.enum';
 
 export class UserToken {
   @Expose()

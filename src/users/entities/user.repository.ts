@@ -4,7 +4,7 @@ import { EntityRepository } from 'typeorm';
 import { User } from './user.entity';
 
 // -- Services
-import { RepositoryService } from 'src/utils/repository/repository.service';
+import { RepositoryService } from '../../utils/repository/repository.service';
 import { CreateUserDto } from '../dto/create-user.dto';
 
 @EntityRepository(User)

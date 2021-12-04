@@ -6,7 +6,7 @@ import { User } from 'src/users/entities/user.entity';
 import { JwtService } from '@nestjs/jwt';
 import { plainToClass } from 'class-transformer';
 import { UserToken } from './entities/user.token';
-import { UsersService } from 'src/users/users.service';
+import { UsersService } from '../users/users.service';
 // rounds of hashing
 const SALT = 10;
 
