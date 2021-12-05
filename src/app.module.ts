@@ -16,7 +16,7 @@ import { AuthModule } from './auth/auth.module';
 
 const Config = ConfigModule.forRoot({
   isGlobal: true,
-  envFilePath: `./config/.env.development`,
+  envFilePath: `./config/.env.` + process.env.NODE_ENV,
 });
 
 const DBConfig = TypeOrmModule.forRoot({
