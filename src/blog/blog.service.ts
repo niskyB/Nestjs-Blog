@@ -17,7 +17,16 @@ export class BlogService {
     return results;
   }
 
-  async createNewBlog(createBlogDto: CreateBlogDto, userId: string) {
+  /**
+   * @description create new blog and save it to db
+   * @param createBlogDto
+   * @param userId
+   * @returns blog instance
+   */
+  async createNewBlog(
+    createBlogDto: CreateBlogDto,
+    userId: string,
+  ): Promise<Blog> {
     // check user
     const user = (await this.userService.findOne(userId)).data;
 
@@ -29,6 +38,21 @@ export class BlogService {
     let blog = this.blogRepository.create();
     blog = plainToClass(Blog, createBlogDto);
     blog.user = user;
+
+    // save to database
+    return await this.blogRepository.manager.save(blog);
+  }
+
+  async disableBlog(id: string): Promise<Blog> {
+    // check existed blog
+    const blog = await this.blogRepository.findOneByField('id', id);
+
+    if (!blog) {
+      throw new NotFoundException("SORRY we couldn't find that page");
+    }
+
+    // update isDisabled
+    blog.isDisabled = true;
 
     // save to database
     return await this.blogRepository.manager.save(blog);

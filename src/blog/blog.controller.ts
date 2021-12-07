@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Param,
   Post,
   Put,
   Req,
@@ -38,7 +39,7 @@ export class BlogController {
   }
 
   @Put('/:id')
-  disableBlog() {
-    return 'User remove blog';
+  async disableBlog(@Param('id') id: string) {
+    return await this.blogService.disableBlog(id);
   }
 }
