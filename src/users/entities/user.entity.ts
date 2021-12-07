@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Blog } from 'src/blog/entities/blog.entity';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { UserRole } from '../enum/user.userRole.enum';
 
 @Entity()
@@ -26,4 +27,7 @@ export class User {
 
   @Column({ default: UserRole.USER.toString() })
   role: UserRole;
+
+  @OneToMany(() => Blog, (blogs) => blogs.user)
+  blogs: Blog[];
 }

@@ -1,6 +1,9 @@
 // module
 import { Module } from '@nestjs/common';
 import { UsersModule } from './users/users.module';
+import { ScheduleModule } from '@nestjs/schedule';
+import { AuthModule } from './auth/auth.module';
+import { BlogModule } from './blog/blog.module';
 
 // service
 import { AppService } from './app.service';
@@ -11,8 +14,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 // entities
 import { User } from './users/entities/user.entity';
-import { ScheduleModule } from '@nestjs/schedule';
-import { AuthModule } from './auth/auth.module';
+import { Blog } from './blog/entities/blog.entity';
 
 const Config = ConfigModule.forRoot({
   isGlobal: true,
@@ -27,7 +29,7 @@ const DBConfig = TypeOrmModule.forRoot({
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
   synchronize: true,
-  entities: [User],
+  entities: [User, Blog],
 });
 
 @Module({
@@ -40,6 +42,7 @@ const DBConfig = TypeOrmModule.forRoot({
     // -- modules
     UsersModule,
     AuthModule,
+    BlogModule,
   ],
   controllers: [],
   providers: [AppService],
