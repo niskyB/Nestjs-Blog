@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
 import { UsersService } from 'src/users/users.service';
 import { CreateBlogDto } from './dto/create-blog.dto';
@@ -13,7 +17,10 @@ export class BlogService {
   ) {}
 
   async getAll(id: string) {
-    const results = await this.blogRepository.findManyByField('user', id);
+    // get current user
+    const user = (await this.userService.findOne(id)).data;
+    // get blogs in database
+    const results = await this.blogRepository.find({ user });
     return results;
   }
 
@@ -43,12 +50,22 @@ export class BlogService {
     return await this.blogRepository.manager.save(blog);
   }
 
-  async disableBlog(id: string): Promise<Blog> {
+  /**
+   * @description change isDisable to true
+   * @param id
+   * @returns blog info
+   */
+  async disableBlog(id: string, userId: string): Promise<Blog> {
     // check existed blog
     const blog = await this.blogRepository.findOneByField('id', id);
 
     if (!blog) {
       throw new NotFoundException("SORRY we couldn't find that page");
+    }
+
+    // check user
+    if (blog.user.id !== userId) {
+      throw new ForbiddenException('Cannot reach the request');
     }
 
     // update isDisabled

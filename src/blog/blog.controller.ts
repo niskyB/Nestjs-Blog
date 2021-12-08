@@ -22,10 +22,16 @@ export class BlogController {
   constructor(private blogService: BlogService) {}
 
   @Get('/all')
-  getAllBlogs() {
-    return 'Get all user blogs';
+  async getAllBlogs(@Req() req: Request) {
+    return await this.blogService.getAll(req.currentUser.id);
   }
 
+  /**
+   * @description create a new blog
+   * @param createBlogDto
+   * @param req
+   * @returns blog info
+   */
   @Post('/newBlog')
   @UsePipes(new JoiValidationPipe(createBlogSchema))
   async createNewBlog(
@@ -38,8 +44,13 @@ export class BlogController {
     );
   }
 
+  /**
+   * @description disable blog
+   * @param id
+   * @returns return blog info
+   */
   @Put('/:id')
-  async disableBlog(@Param('id') id: string) {
-    return await this.blogService.disableBlog(id);
+  async disableBlog(@Param('id') id: string, @Req() req: Request) {
+    return await this.blogService.disableBlog(id, req.currentUser.id);
   }
 }

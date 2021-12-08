@@ -28,6 +28,6 @@ export class User {
   @Column({ default: UserRole.USER.toString() })
   role: UserRole;
 
-  @OneToMany(() => Blog, (blogs) => blogs.user)
+  @OneToMany(() => Blog, (blog) => blog.user)
   blogs: Blog[];
 }

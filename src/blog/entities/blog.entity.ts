@@ -21,7 +21,6 @@ export class Blog {
   @ManyToOne(() => User, (user) => user.blogs, {
     nullable: false,
     cascade: true,
-    eager: true,
   })
   user: User;
 }
