@@ -9,17 +9,11 @@ import { BlogModule } from './blog/blog.module';
 import { AppService } from './app.service';
 
 // config & dbconfig
-import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 // entities
 import { User } from './users/entities/user.entity';
 import { Blog } from './blog/entities/blog.entity';
-
-const Config = ConfigModule.forRoot({
-  isGlobal: true,
-  envFilePath: `./config/.env.` + process.env.NODE_ENV,
-});
 
 const DBConfig = TypeOrmModule.forRoot({
   type: 'mysql',
@@ -32,10 +26,14 @@ const DBConfig = TypeOrmModule.forRoot({
   entities: [User, Blog],
 });
 
+console.log(process.env.DB_PORT);
+console.log(process.env.DB_USERNAME);
+console.log(process.env.DB_PASSWORD);
+console.log(process.env.DB_NAME);
+
 @Module({
   imports: [
     // -- configs
-    Config,
     DBConfig,
     ScheduleModule.forRoot(),
 
